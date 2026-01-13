@@ -8,6 +8,7 @@ interface DashboardProps {
   onAddAmortization: (purchase: Purchase) => void;
   onEditPurchase: (purchase: Purchase) => void;
   onEditAmortization: (purchase: Purchase, amortization: Amortization) => void;
+  onDeleteAmortization: (purchase: Purchase, amortizationId: string) => void;
   onDelete: (purchase: Purchase) => void;
 }
 
@@ -16,6 +17,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   onAddAmortization, 
   onEditPurchase,
   onEditAmortization,
+  onDeleteAmortization,
   onDelete 
 }) => {
   return (
@@ -27,6 +29,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           onAddAmortization={() => onAddAmortization(purchase)}
           onEditPurchase={() => onEditPurchase(purchase)}
           onEditAmortization={(amort) => onEditAmortization(purchase, amort)}
+          onDeleteAmortization={(amortId) => onDeleteAmortization(purchase, amortId)}
           onDelete={() => onDelete(purchase)}
         />
       ))}

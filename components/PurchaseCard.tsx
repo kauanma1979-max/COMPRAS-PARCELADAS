@@ -7,6 +7,7 @@ interface PurchaseCardProps {
   onAddAmortization: () => void;
   onEditPurchase: () => void;
   onEditAmortization: (amortization: Amortization) => void;
+  onDeleteAmortization: (amortizationId: string) => void;
   onDelete: () => void;
 }
 
@@ -15,6 +16,7 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
   onAddAmortization, 
   onEditPurchase,
   onEditAmortization,
+  onDeleteAmortization,
   onDelete 
 }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -25,7 +27,11 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
   const progressPercentage = (totalAmortized / purchase.totalValue) * 100;
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    if (!dateString) return '';
+    // Fix: Parse YYYY-MM-DD manually to avoid UTC conversion shifts
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('pt-BR');
   };
 
   const formatCurrency = (val: number) => {
@@ -123,19 +129,28 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
             <p className="text-sm text-slate-400 italic">Nenhuma amortização registrada.</p>
           ) : (
             <ul className="space-y-2">
-              {purchase.amortizations.map((item) => (
+              {[...purchase.amortizations].sort((a, b) => b.date.localeCompare(a.date)).map((item) => (
                 <li key={item.id} className="flex justify-between items-center p-2 rounded-lg bg-slate-50/50 group">
                   <div className="flex flex-col">
                     <span className="text-[10px] text-slate-500 uppercase font-bold">{formatDate(item.date)}</span>
                     <span className="text-sm font-bold text-green-600">{formatCurrency(item.amount)}</span>
                   </div>
-                  <button 
-                    onClick={() => onEditAmortization(item)}
-                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-indigo-600 transition-all p-2"
-                    title="Editar Amortização"
-                  >
-                    <i className="fa-solid fa-pen text-xs"></i>
-                  </button>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                    <button 
+                      onClick={() => onEditAmortization(item)}
+                      className="text-slate-400 hover:text-indigo-600 transition-all p-2"
+                      title="Editar Amortização"
+                    >
+                      <i className="fa-solid fa-pen text-xs"></i>
+                    </button>
+                    <button 
+                      onClick={() => onDeleteAmortization(item.id)}
+                      className="text-slate-400 hover:text-red-500 transition-all p-2"
+                      title="Excluir Amortização"
+                    >
+                      <i className="fa-solid fa-trash text-xs"></i>
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

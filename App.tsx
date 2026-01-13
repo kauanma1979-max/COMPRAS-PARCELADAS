@@ -115,6 +115,20 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDeleteAmortization = (purchase: Purchase, amortizationId: string) => {
+    setPurchases((prev) =>
+      prev.map((p) =>
+        p.id === purchase.id
+          ? {
+              ...p,
+              amortizations: p.amortizations.filter((a) => a.id !== amortizationId),
+            }
+          : p
+      )
+    );
+    addToast("Amortização removida.", "info");
+  };
+
   const handleBackup = () => {
     const dataStr = JSON.stringify(purchases, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -232,6 +246,7 @@ const App: React.FC = () => {
             onAddAmortization={openAddAmortizationModal} 
             onEditPurchase={openEditPurchaseModal}
             onEditAmortization={openEditAmortizationModal}
+            onDeleteAmortization={handleDeleteAmortization}
             onDelete={openDeleteModal}
           />
         )}

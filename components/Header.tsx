@@ -17,8 +17,8 @@ const Header: React.FC<HeaderProps> = ({ onAddClick, onBackup, onRestore }) => {
             <div className="bg-indigo-600 w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-indigo-200 shadow-lg">
               <i className="fa-solid fa-wallet text-xl"></i>
             </div>
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-              AmortizaEase
+            <h1 className="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 uppercase tracking-tight">
+              Compras Parceladas
             </h1>
           </div>
           <div className="flex items-center gap-2">

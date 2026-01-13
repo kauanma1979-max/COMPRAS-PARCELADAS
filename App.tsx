@@ -21,19 +21,25 @@ const App: React.FC = () => {
 
   // Initialize from LocalStorage
   useEffect(() => {
-    const saved = localStorage.getItem('amortiza_ease_data');
+    const saved = localStorage.getItem('compras_parceladas_data');
     if (saved) {
       try {
         setPurchases(JSON.parse(saved));
       } catch (e) {
         console.error("Failed to load data", e);
       }
+    } else {
+        // Fallback check for old branding name to prevent data loss
+        const oldSaved = localStorage.getItem('amortiza_ease_data');
+        if (oldSaved) {
+            setPurchases(JSON.parse(oldSaved));
+        }
     }
   }, []);
 
   // Save to LocalStorage
   useEffect(() => {
-    localStorage.setItem('amortiza_ease_data', JSON.stringify(purchases));
+    localStorage.setItem('compras_parceladas_data', JSON.stringify(purchases));
   }, [purchases]);
 
   const addToast = useCallback((message: string, type: ToastMessage['type'] = 'success') => {
@@ -115,7 +121,7 @@ const App: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `amortiza_ease_backup_${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `compras_parceladas_backup_${new Date().toISOString().split('T')[0]}.json`;
     link.click();
     URL.revokeObjectURL(url);
     addToast("Backup gerado com sucesso!");

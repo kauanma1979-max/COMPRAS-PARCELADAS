@@ -111,15 +111,15 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
         </div>
 
         {/* Big Calendar Due Date Square - Focus on the Day as a monthly reminder */}
-        <div className={`flex flex-col items-center justify-center border rounded-2xl w-20 h-auto p-2 shadow-sm transition-all hover:shadow-md border-dashed ${
+        <div className={`flex flex-col items-center justify-center border rounded-2xl w-24 h-auto p-3 shadow-sm transition-all hover:shadow-md border-dashed ${
           isPaidOff ? 'bg-emerald-100 border-emerald-300' : 'bg-white border-indigo-200'
         }`}>
-          <div className={`${isPaidOff ? 'bg-emerald-600' : 'bg-indigo-600'} w-full rounded-lg text-[10px] text-white font-bold text-center py-1 uppercase mb-1`}>
+          <div className={`${isPaidOff ? 'bg-emerald-600' : 'bg-indigo-600'} w-full rounded-lg text-xs text-white font-bold text-center py-1 uppercase mb-1`}>
             DIA
           </div>
           <div className="flex-1 flex flex-col items-center justify-center">
-            <span className={`text-3xl font-black leading-none ${isPaidOff ? 'text-emerald-800' : 'text-indigo-800'}`}>{getDueDateDay(purchase.dueDate)}</span>
-            <span className={`text-[10px] font-bold uppercase mt-1 ${isPaidOff ? 'text-emerald-500' : 'text-indigo-400'}`}>PAGAR</span>
+            <span className={`text-4xl font-black leading-none ${isPaidOff ? 'text-emerald-800' : 'text-indigo-800'}`}>{getDueDateDay(purchase.dueDate)}</span>
+            <span className={`text-xs font-bold uppercase mt-1 ${isPaidOff ? 'text-emerald-500' : 'text-indigo-400'}`}>PAGAR</span>
           </div>
         </div>
       </div>

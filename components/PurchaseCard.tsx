@@ -22,9 +22,10 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
   const [showDetails, setShowDetails] = useState(false);
 
   const totalAmortized = purchase.amortizations.reduce((acc, curr) => acc + curr.amount, 0);
-  const currentBalance = Math.max(0, purchase.totalValue - totalAmortized);
-  const monthlyInstallment = purchase.totalValue / purchase.installments;
-  const progressPercentage = (totalAmortized / purchase.totalValue) * 100;
+  const remainingToInstall = Math.max(0, purchase.totalValue - (purchase.downPayment || 0));
+  const currentBalance = Math.max(0, remainingToInstall - totalAmortized);
+  const monthlyInstallment = remainingToInstall / purchase.installments;
+  const progressPercentage = ((totalAmortized + (purchase.downPayment || 0)) / purchase.totalValue) * 100;
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
@@ -77,6 +78,14 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
         <div>
           <p className="text-xs text-slate-500 uppercase font-semibold">Total Original</p>
           <p className="text-lg font-bold text-slate-700">{formatCurrency(purchase.totalValue)}</p>
+        </div>
+        <div>
+          <p className="text-xs text-slate-500 uppercase font-semibold">Entrada</p>
+          <p className="text-lg font-bold text-slate-700">{formatCurrency(purchase.downPayment || 0)}</p>
+        </div>
+        <div>
+          <p className="text-xs text-slate-500 uppercase font-semibold">Saldo Parcelado</p>
+          <p className="text-lg font-bold text-slate-700">{formatCurrency(remainingToInstall)}</p>
         </div>
         <div>
           <p className="text-xs text-slate-500 uppercase font-semibold">Parcela Est.</p>

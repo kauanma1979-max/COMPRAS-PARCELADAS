@@ -9,6 +9,7 @@ export interface Purchase {
   id: string;
   name: string;
   totalValue: number;
+  downPayment: number;
   installments: number;
   startDate: string;
   amortizations: Amortization[];

@@ -11,6 +11,7 @@ interface PurchaseModalProps {
 const PurchaseModal: React.FC<PurchaseModalProps> = ({ onClose, onSubmit, initialData }) => {
   const [name, setName] = useState('');
   const [totalValue, setTotalValue] = useState('');
+  const [downPayment, setDownPayment] = useState('0');
   const [installments, setInstallments] = useState('1');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [receiptUrl, setReceiptUrl] = useState('');
@@ -20,6 +21,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ onClose, onSubmit, initia
     if (initialData) {
       setName(initialData.name);
       setTotalValue(String(initialData.totalValue));
+      setDownPayment(String(initialData.downPayment || 0));
       setInstallments(String(initialData.installments));
       setStartDate(initialData.startDate);
       setReceiptUrl(initialData.receiptUrl || '');
@@ -42,6 +44,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ onClose, onSubmit, initia
     onSubmit({
       name,
       totalValue: Number(totalValue),
+      downPayment: Number(downPayment) || 0,
       installments: Number(installments),
       startDate,
       receiptUrl: receiptUrl.trim() || undefined,
@@ -82,15 +85,27 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ onClose, onSubmit, initia
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Parcelas</label>
+              <label className="block text-sm font-bold text-slate-700 mb-1">Entrada (R$)</label>
               <input 
                 type="number"
-                value={installments}
-                onChange={(e) => setInstallments(e.target.value)}
-                className={`w-full px-4 py-3 rounded-xl border ${errors.installments ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all`}
-                placeholder="1"
+                step="0.01"
+                value={downPayment}
+                onChange={(e) => setDownPayment(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition-all"
+                placeholder="0.00"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-1">Parcelas</label>
+            <input 
+              type="number"
+              value={installments}
+              onChange={(e) => setInstallments(e.target.value)}
+              className={`w-full px-4 py-3 rounded-xl border ${errors.installments ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all`}
+              placeholder="1"
+            />
           </div>
 
           <div>

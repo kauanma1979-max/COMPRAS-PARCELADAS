@@ -26,6 +26,7 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
   const currentBalance = Math.max(0, remainingToInstall - totalAmortized);
   const monthlyInstallment = remainingToInstall / purchase.installments;
   const progressPercentage = ((totalAmortized + (purchase.downPayment || 0)) / purchase.totalValue) * 100;
+  const isPaidOff = progressPercentage >= 99.9;
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
@@ -35,13 +36,28 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
     return date.toLocaleDateString('pt-BR');
   };
 
+  const getDueDateDay = (dateString: string) => {
+    if (!dateString) return '--';
+    const [, , day] = dateString.split('-');
+    return day || '--';
+  };
+
+  const getDueDateMonth = (dateString: string) => {
+    if (!dateString) return '';
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+  };
+
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
   };
 
   return (
-    <div className="bg-white rounded-[16px] border border-slate-100 p-6 shadow-sm card-hover flex flex-col h-full relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-4 flex gap-1">
+    <div className={`rounded-[16px] border p-6 shadow-sm card-hover flex flex-col h-full relative overflow-hidden transition-all duration-500 ${
+      isPaidOff ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-100'
+    }`}>
+      <div className="absolute top-0 right-0 p-4 flex items-center gap-1">
         {purchase.receiptUrl && (
           <a 
             href={purchase.receiptUrl} 
@@ -74,26 +90,41 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
         <h3 className="text-xl font-bold text-slate-800 mt-1 truncate">{purchase.name}</h3>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div>
-          <p className="text-xs text-slate-500 uppercase font-semibold">Total Original</p>
-          <p className="text-lg font-bold text-slate-700">{formatCurrency(purchase.totalValue)}</p>
+      <div className="flex gap-4 mb-6">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3 flex-1">
+          <div>
+            <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">Total Original</p>
+            <p className="text-lg font-bold text-slate-700">{formatCurrency(purchase.totalValue)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">Entrada</p>
+            <p className="text-lg font-bold text-slate-700">{formatCurrency(purchase.downPayment || 0)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">Saldo Parcelado</p>
+            <p className="text-lg font-bold text-slate-700">{formatCurrency(remainingToInstall)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">VALOR DA PARCELA</p>
+            <p className="text-lg font-bold text-indigo-600">{formatCurrency(monthlyInstallment)}</p>
+          </div>
         </div>
-        <div>
-          <p className="text-xs text-slate-500 uppercase font-semibold">Entrada</p>
-          <p className="text-lg font-bold text-slate-700">{formatCurrency(purchase.downPayment || 0)}</p>
-        </div>
-        <div>
-          <p className="text-xs text-slate-500 uppercase font-semibold">Saldo Parcelado</p>
-          <p className="text-lg font-bold text-slate-700">{formatCurrency(remainingToInstall)}</p>
-        </div>
-        <div>
-          <p className="text-xs text-slate-500 uppercase font-semibold">Parcela Est.</p>
-          <p className="text-lg font-bold text-indigo-600">{formatCurrency(monthlyInstallment)}</p>
+
+        {/* Big Calendar Due Date Square - Focus on the Day as a monthly reminder */}
+        <div className={`flex flex-col items-center justify-center border rounded-2xl w-20 h-auto p-2 shadow-sm transition-all hover:shadow-md border-dashed ${
+          isPaidOff ? 'bg-emerald-100 border-emerald-300' : 'bg-white border-indigo-200'
+        }`}>
+          <div className={`${isPaidOff ? 'bg-emerald-600' : 'bg-indigo-600'} w-full rounded-lg text-[10px] text-white font-bold text-center py-1 uppercase mb-1`}>
+            DIA
+          </div>
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <span className={`text-3xl font-black leading-none ${isPaidOff ? 'text-emerald-800' : 'text-indigo-800'}`}>{getDueDateDay(purchase.dueDate)}</span>
+            <span className={`text-[10px] font-bold uppercase mt-1 ${isPaidOff ? 'text-emerald-500' : 'text-indigo-400'}`}>PAGAR</span>
+          </div>
         </div>
       </div>
 
-      <div className="bg-slate-50 rounded-xl p-4 mb-6">
+      <div className={`${isPaidOff ? 'bg-emerald-200/40' : 'bg-slate-50'} rounded-xl p-4 mb-6 transition-colors`}>
         <div className="flex justify-between items-end mb-2">
           <div>
             <p className="text-xs text-slate-500 uppercase font-semibold">Saldo Devedor Atual</p>
@@ -106,7 +137,7 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({
         
         <div className="w-full bg-slate-200 rounded-full h-2 mb-1">
           <div 
-            className="bg-indigo-600 h-2 rounded-full transition-all duration-1000" 
+            className={`${isPaidOff ? 'bg-emerald-600' : 'bg-indigo-600'} h-2 rounded-full transition-all duration-1000`} 
             style={{ width: `${Math.min(100, progressPercentage)}%` }}
           ></div>
         </div>

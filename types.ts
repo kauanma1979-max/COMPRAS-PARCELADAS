@@ -12,6 +12,7 @@ export interface Purchase {
   downPayment: number;
   installments: number;
   startDate: string;
+  dueDate: string;
   amortizations: Amortization[];
   receiptUrl?: string; // New field for Google Drive link
 }

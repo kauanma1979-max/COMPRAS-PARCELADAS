@@ -14,6 +14,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ onClose, onSubmit, initia
   const [downPayment, setDownPayment] = useState('0');
   const [installments, setInstallments] = useState('1');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [dueDate, setDueDate] = useState(new Date().toISOString().split('T')[0]);
   const [receiptUrl, setReceiptUrl] = useState('');
   const [errors, setErrors] = useState<Record<string, boolean>>({});
 
@@ -24,6 +25,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ onClose, onSubmit, initia
       setDownPayment(String(initialData.downPayment || 0));
       setInstallments(String(initialData.installments));
       setStartDate(initialData.startDate);
+      setDueDate(initialData.dueDate || initialData.startDate);
       setReceiptUrl(initialData.receiptUrl || '');
     }
   }, [initialData]);
@@ -35,6 +37,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ onClose, onSubmit, initia
     if (!name.trim()) newErrors.name = true;
     if (!totalValue || Number(totalValue) <= 0) newErrors.totalValue = true;
     if (!installments || Number(installments) <= 0) newErrors.installments = true;
+    if (!dueDate) newErrors.dueDate = true;
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -47,6 +50,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ onClose, onSubmit, initia
       downPayment: Number(downPayment) || 0,
       installments: Number(installments),
       startDate,
+      dueDate,
       receiptUrl: receiptUrl.trim() || undefined,
     });
   };
@@ -108,14 +112,25 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ onClose, onSubmit, initia
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Data da Compra</label>
-            <input 
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition-all"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-1">Data da Compra</label>
+              <input 
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-1">Dia de Vencimento</label>
+              <input 
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className={`w-full px-4 py-3 rounded-xl border ${errors.dueDate ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all`}
+              />
+            </div>
           </div>
 
           <div>
